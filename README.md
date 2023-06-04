@@ -11,3 +11,5 @@
 
 3. Think simple publishing. (MUI or Manual CSS)
 - (test) add storybook
+
+4. Deploy using Azure App Service.
