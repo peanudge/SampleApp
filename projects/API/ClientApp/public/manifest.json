@@ -1,6 +1,6 @@
 {
-  "short_name": "dotnet_login",
-  "name": "dotnet_login",
+  "short_name": "client_app",
+  "name": "client_app",
   "icons": [
     {
       "src": "favicon.ico",
