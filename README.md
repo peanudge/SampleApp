@@ -13,3 +13,9 @@
 - (test) add storybook
 
 4. Deploy using Azure App Service.
+
+# This project have three-layer
+
+- API, as Web Layer receives requests and routes them to a service in the Domain or business layer
+- Domain, as Domain Layer
+- Infrastructure, as Persistence Layer to query for or modify the current state of our domain entities.

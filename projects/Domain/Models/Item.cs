@@ -10,7 +10,9 @@ namespace Domain.Models
         public DateTimeOffset ReleaseTime { get; set; }
         public string Format { get; set; } = null!;
         public int AvailableStock { get; set; }
+        public Guid GenreId { get; set; }
         public Genre Genre { get; set; } = null!;
+        public Guid ArtistId { get; set; }
         public Artist Artist { get; set; } = null!;
         public Price Price { get; set; } = null!;
     }

@@ -4,5 +4,6 @@ namespace Domain.Models
     {
         public Guid GenreId { get; set; }
         public string GenreDescription { get; set; } = null!;
+        public ICollection<Item> Items { get; set; } = null!;
     }
 }
