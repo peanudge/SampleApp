@@ -25,6 +25,37 @@ namespace Infrastructure.Tests
             _connection.Close();
         }
 
+
+        private Item GenerateSingleMockItem()
+        {
+            return new Item
+            {
+                Id = Guid.NewGuid(),
+                Name = "Test Item 1",
+                Description = "Test Item 1 Description",
+                LabelName = "Test Item 1 LabelName",
+                PictureUri = "Test Item 1 PictureUri",
+                ReleaseTime = DateTimeOffset.UtcNow,
+                Format = "Test Item 1 Format",
+                AvailableStock = 1,
+                Genre = new Genre
+                {
+                    GenreId = Guid.NewGuid(),
+                    GenreDescription = "Test Genre 1 Description",
+                },
+                Artist = new Artist
+                {
+                    ArtistId = Guid.NewGuid(),
+                    ArtistName = "Test Artist 1 Name",
+                },
+                Price = new Price
+                {
+                    Amount = 1,
+                    Currency = "Test Price 1 Currency",
+                },
+            };
+        }
+
         [Fact]
         public async Task ShouldGetAllItem()
         {
@@ -102,43 +133,66 @@ namespace Infrastructure.Tests
             }
         }
 
-        private Item GenerateSingleMockItem()
+
+        [Fact]
+        public async Task ShouldAddItem()
         {
-            return new Item
+            var targetItem = GenerateSingleMockItem();
+
+            // Given 
+            using (var context = new CatalogContext(_contextOptions))
             {
-                Id = Guid.NewGuid(),
-                Name = "Test Item 1",
-                Description = "Test Item 1 Description",
-                LabelName = "Test Item 1 LabelName",
-                PictureUri = "Test Item 1 PictureUri",
-                ReleaseTime = DateTimeOffset.UtcNow,
-                Format = "Test Item 1 Format",
-                AvailableStock = 1,
-                Genre = new Genre
-                {
-                    GenreId = Guid.NewGuid(),
-                    GenreDescription = "Test Genre 1 Description",
-                },
-                Artist = new Artist
-                {
-                    ArtistId = Guid.NewGuid(),
-                    ArtistName = "Test Artist 1 Name",
-                },
-                Price = new Price
-                {
-                    Amount = 1,
-                    Currency = "Test Price 1 Currency",
-                },
-            };
+                var exist = context.Database.EnsureCreated();
+                Assert.True(exist);
+            }
+
+            using (var context = new CatalogContext(_contextOptions))
+            {
+                // When
+                var repository = new ItemRepository(context);
+
+                repository.Add(targetItem);
+
+                await repository.UnitOfWork.SaveEntitiesAsync();
+
+                var result = await repository.GetAsync(targetItem.Id);
+
+                // Then 
+                var item = Assert.IsType<Item>(result);
+                Assert.NotNull(result);
+            }
         }
 
-        [Fact(Skip = "Not Implemented")]
-        public void ShouldAddItem()
+        [Fact]
+        public async Task ShouldUpdateItem()
         {
+            var willUpdatedItem = GenerateSingleMockItem();
+
             // Given 
-            // When 
-            // Then
-            throw new NotImplementedException();
+            using (var context = new CatalogContext(_contextOptions))
+            {
+                var exist = context.Database.EnsureCreated();
+                Assert.True(exist);
+
+                context.Items.Add(willUpdatedItem);
+                context.SaveChanges();
+            }
+
+            using (var context = new CatalogContext(_contextOptions))
+            {
+                // When
+                var repository = new ItemRepository(context);
+
+                willUpdatedItem.Description = "Updated Description";
+                repository.Update(willUpdatedItem);
+
+                await repository.UnitOfWork.SaveEntitiesAsync();
+
+                // Then 
+                var result = context.Items.FirstOrDefault(x => x.Id == willUpdatedItem.Id);
+                var item = Assert.IsType<Item>(result);
+                Assert.Equal("Updated Description", item.Description);
+            }
         }
 
         [Fact(Skip = "Not Implemented")]
