@@ -1,0 +1,3 @@
+# About Request Modal
+
+It may seem a little bit redundant, defining a request class for a single field. Despite that, we should consider that the HTTP requests received by our service may vary over time. Therefore, this approach guarantees us being able to evolve our requests without adding tons of parameters to the methods of the service class. On top of that, representing our incoming requests as classes provides an easy way to version the different request types evolving over time.

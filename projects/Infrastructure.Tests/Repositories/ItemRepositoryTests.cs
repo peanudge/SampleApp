@@ -35,7 +35,7 @@ namespace Infrastructure.Tests
                 Description = "Test Item 1 Description",
                 LabelName = "Test Item 1 LabelName",
                 PictureUri = "Test Item 1 PictureUri",
-                ReleaseTime = DateTimeOffset.UtcNow,
+                ReleaseDate = DateTimeOffset.UtcNow,
                 Format = "Test Item 1 Format",
                 AvailableStock = 1,
                 Genre = new Genre

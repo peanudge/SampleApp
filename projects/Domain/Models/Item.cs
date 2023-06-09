@@ -7,7 +7,7 @@ namespace Domain.Models
         public string Description { get; set; } = null!;
         public string LabelName { get; set; } = null!;
         public string PictureUri { get; set; } = null!;
-        public DateTimeOffset ReleaseTime { get; set; }
+        public DateTimeOffset ReleaseDate { get; set; }
         public string Format { get; set; } = null!;
         public int AvailableStock { get; set; }
         public Guid GenreId { get; set; }
