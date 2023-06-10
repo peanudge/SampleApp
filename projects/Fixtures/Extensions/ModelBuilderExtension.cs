@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
-namespace Infrastructure.Tests;
+namespace Fixtures.Extensions;
 
 public static class ModelBuilderExtensions
 {

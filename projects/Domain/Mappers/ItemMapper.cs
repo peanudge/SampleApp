@@ -15,12 +15,8 @@ public class ItemMapper : IItemMapper
         _artistMapper = artistMapper;
     }
 
-    public Item? Map(AddItemRequest request)
+    public Item Map(AddItemRequest request)
     {
-        if (request is null)
-        {
-            return null;
-        }
         var item = new Item
         {
             Name = request.Name,
@@ -45,12 +41,8 @@ public class ItemMapper : IItemMapper
         return item;
     }
 
-    public Item? Map(EditItemRequest request)
+    public Item Map(EditItemRequest request)
     {
-        if (request is null)
-        {
-            return null;
-        }
         var item = new Item
         {
             Name = request.Name,

@@ -1,30 +1,20 @@
-using System.Data.Common;
 using Domain.Models;
+using Fixtures;
 using Intrastructure.Repositories;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Tests
 {
-    public class ItemRepositoryTests : IDisposable
+    public class ItemRepositoryTests : IClassFixture<CatalogContextFactory>
     {
-        private readonly DbConnection _connection;
-        private readonly DbContextOptions<CatalogContext> _contextOptions;
+        private readonly TestCatalogContext _context;
+        private readonly ItemRepository _repository;
 
-        public ItemRepositoryTests()
+        public ItemRepositoryTests(CatalogContextFactory catalogContextFactory)
         {
-            _connection = new SqliteConnection("Filename=:memory:");
-            _connection.Open();
-            _contextOptions = new DbContextOptionsBuilder<CatalogContext>()
-                .UseSqlite(_connection)
-                .Options;
+            _context = catalogContextFactory.ContextInstance;
+            _repository = new ItemRepository(_context);
         }
-
-        public void Dispose()
-        {
-            _connection.Close();
-        }
-
 
         private Item GenerateSingleMockItem()
         {
@@ -59,25 +49,28 @@ namespace Infrastructure.Tests
         [Fact]
         public async Task ShouldGetAllItem()
         {
-            // Given 
-            using (var context = new CatalogContext(_contextOptions))
+            // INFO: Why note use shared _context?
+            // because this test want to prevent adding new item by other test.
+            var contextOption = new DbContextOptionsBuilder<CatalogContext>()
+                .UseInMemoryDatabase(databaseName: "should_get_data")
+                .EnableSensitiveDataLogging()
+                .Options;
+
+            using (var context = new CatalogContext(contextOption))
             {
-                var exist = context.Database.EnsureCreated();
-                Assert.True(exist);
+                // Given   
                 context.Items.Add(GenerateSingleMockItem());
                 context.Items.Add(GenerateSingleMockItem());
                 context.SaveChanges();
-            }
 
-            // When
-            using (var context = new CatalogContext(_contextOptions))
-            {
                 var repository = new ItemRepository(context);
+                // When 
                 var result = await repository.GetAsync();
 
                 // Then
                 var items = Assert.IsType<List<Item>>(result);
                 Assert.NotEmpty(items);
+                Assert.Equal(2, items.Count);
             }
         }
 
@@ -86,25 +79,16 @@ namespace Infrastructure.Tests
         {
             var targetItem = GenerateSingleMockItem();
 
-            // Given 
-            using (var context = new CatalogContext(_contextOptions))
-            {
-                var exist = context.Database.EnsureCreated();
-                Assert.True(exist);
-                context.Items.Add(targetItem);
-                context.SaveChanges();
-            }
+            // Given   
+            _context.Items.Add(targetItem);
+            _context.SaveChanges();
 
-            using (var context = new CatalogContext(_contextOptions))
-            {
-                // When
-                var repository = new ItemRepository(context);
-                var result = await repository.GetAsync(targetItem.Id);
+            // When 
+            var result = await _repository.GetAsync(targetItem.Id);
 
-                // Then
-                var item = Assert.IsType<Item>(result);
-                Assert.NotNull(item);
-            }
+            // Then
+            var item = Assert.IsType<Item>(result);
+            Assert.NotNull(item);
         }
 
         [Fact]
@@ -112,55 +96,36 @@ namespace Infrastructure.Tests
         {
             var targetItem = GenerateSingleMockItem();
 
-            // Given 
-            using (var context = new CatalogContext(_contextOptions))
-            {
-                var exist = context.Database.EnsureCreated();
-                Assert.True(exist);
-                context.Items.Add(targetItem);
-                context.SaveChanges();
-            }
+            // Given   
+            _context.Items.Add(targetItem);
+            _context.SaveChanges();
 
-            using (var context = new CatalogContext(_contextOptions))
-            {
-                // When
-                var repository = new ItemRepository(context);
-                var diffGuid = Guid.NewGuid();
-                var result = await repository.GetAsync(diffGuid);
+            // When
+            var diffGuid = Guid.NewGuid();
+            var result = await _repository.GetAsync(diffGuid);
 
-                // Then 
-                Assert.Null(result);
-            }
+            // Then 
+            Assert.Null(result);
+
         }
-
 
         [Fact]
         public async Task ShouldAddItem()
         {
             var targetItem = GenerateSingleMockItem();
 
-            // Given 
-            using (var context = new CatalogContext(_contextOptions))
-            {
-                var exist = context.Database.EnsureCreated();
-                Assert.True(exist);
-            }
+            // Given   
 
-            using (var context = new CatalogContext(_contextOptions))
-            {
-                // When
-                var repository = new ItemRepository(context);
+            // When 
+            _repository.Add(targetItem);
 
-                repository.Add(targetItem);
+            await _repository.UnitOfWork.SaveEntitiesAsync();
 
-                await repository.UnitOfWork.SaveEntitiesAsync();
+            var result = await _repository.GetAsync(targetItem.Id);
 
-                var result = await repository.GetAsync(targetItem.Id);
-
-                // Then 
-                var item = Assert.IsType<Item>(result);
-                Assert.NotNull(result);
-            }
+            // Then 
+            var item = Assert.IsType<Item>(result);
+            Assert.NotNull(result);
         }
 
         [Fact]
@@ -168,31 +133,21 @@ namespace Infrastructure.Tests
         {
             var willUpdatedItem = GenerateSingleMockItem();
 
-            // Given 
-            using (var context = new CatalogContext(_contextOptions))
-            {
-                var exist = context.Database.EnsureCreated();
-                Assert.True(exist);
+            // Given   
+            _context.Items.Add(willUpdatedItem);
+            _context.SaveChanges();
 
-                context.Items.Add(willUpdatedItem);
-                context.SaveChanges();
-            }
+            // When 
 
-            using (var context = new CatalogContext(_contextOptions))
-            {
-                // When
-                var repository = new ItemRepository(context);
+            willUpdatedItem.Description = "Updated Description";
+            _repository.Update(willUpdatedItem);
 
-                willUpdatedItem.Description = "Updated Description";
-                repository.Update(willUpdatedItem);
+            await _repository.UnitOfWork.SaveEntitiesAsync();
 
-                await repository.UnitOfWork.SaveEntitiesAsync();
-
-                // Then 
-                var result = context.Items.FirstOrDefault(x => x.Id == willUpdatedItem.Id);
-                var item = Assert.IsType<Item>(result);
-                Assert.Equal("Updated Description", item.Description);
-            }
+            // Then 
+            var result = _context.Items.FirstOrDefault(x => x.Id == willUpdatedItem.Id);
+            var item = Assert.IsType<Item>(result);
+            Assert.Equal("Updated Description", item.Description);
         }
 
         [Fact(Skip = "Not Implemented")]

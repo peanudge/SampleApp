@@ -1,7 +1,9 @@
 using Domain.Models;
+using Fixtures.Extensions;
+using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Tests;
+namespace Fixtures;
 
 public class TestCatalogContext : CatalogContext
 {
