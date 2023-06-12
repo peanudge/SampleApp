@@ -45,6 +45,7 @@ public class ItemMapper : IItemMapper
     {
         var item = new Item
         {
+            Id = request.Id,
             Name = request.Name,
             Description = request.Description,
             LabelName = request.LabelName,
@@ -85,9 +86,9 @@ public class ItemMapper : IItemMapper
             Format = item.Format,
             AvailableStock = item.AvailableStock,
             GenreId = item.GenreId,
-            Genre = _genreMapper.Map(item.Genre),
+            Genre = item.Genre is not null ? _genreMapper.Map(item.Genre) : null,
             ArtistId = item.ArtistId,
-            Artist = _artistMapper.Map(item.Artist)
+            Artist = item.Artist is not null ? _artistMapper.Map(item.Artist) : null
         };
         return response;
     }

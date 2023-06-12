@@ -17,6 +17,9 @@
 	},
 	{
 		"path": "projects/Fixtures"
+	},
+	{
+		"path": "projects/Domain.Tests"
 	}
 ],
   "settings": {}

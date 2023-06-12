@@ -1,8 +1,10 @@
 using System.Data.Common;
+using System.Diagnostics;
 using Domain.Mappers;
 using Infrastructure;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Fixtures;
 
@@ -22,6 +24,9 @@ public class CatalogContextFactory : IDisposable
         var contextOptions = new DbContextOptionsBuilder<CatalogContext>()
             .UseSqlite(_connection)
             .EnableSensitiveDataLogging() // TODO: Research about this method!
+            .LogTo(msg => Debug.WriteLine(msg),
+             new[] { DbLoggerCategory.Database.Command.Name },
+             LogLevel.Information)
             .Options;
 
         EnsureCreation(contextOptions);
