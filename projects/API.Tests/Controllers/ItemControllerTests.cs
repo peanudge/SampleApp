@@ -26,15 +26,15 @@ public class ItemControllerTests : IClassFixture<InMemoryApplicationFactory<Prog
         response.EnsureSuccessStatusCode();
     }
 
-    [Fact]
-    public async Task GetByIdShouldReturnSuccess()
+    [Theory]
+    [LoadData("item")]
+    public async Task GetByIdShouldReturnSuccess(Item request)
     {
-        const string id = "86bff4f7-05a7-46b6-ba73-d43e2c45840f";
         // Given
         var client = _factory.CreateClient();
 
         // When
-        var response = await client.GetAsync($"/api/v1/items/{id}");
+        var response = await client.GetAsync($"/api/v1/items/{request.Id}");
         response.EnsureSuccessStatusCode();
         var responseContent = await response.Content.ReadAsStringAsync();
         var responseEntity = JsonConvert.DeserializeObject<Item>(responseContent);
@@ -43,23 +43,10 @@ public class ItemControllerTests : IClassFixture<InMemoryApplicationFactory<Prog
         Assert.NotNull(responseEntity);
     }
 
-    [Fact]
-    public async Task AddShouldCreateNewRecord()
+    [Theory]
+    [LoadData("item")]
+    public async Task AddShouldCreateNewRecord(AddItemRequest request)
     {
-        var request = new AddItemRequest
-        {
-            Name = "Test album",
-            Description = "Description",
-            LabelName = "Label name",
-            Price = new Price { Amount = 13, Currency = "EUR" },
-            PictureUri = "https://mycdn.com/pictures/32423423",
-            Format = "Vinyl",
-            ReleaseDate = DateTimeOffset.Now,
-            AvailableStock = 5,
-            ArtistId = Guid.Parse("f08a333d-30db-4dd1-b8ba-3b0473c7cdab"),
-            GenreId = Guid.Parse("c04f05c0-f6ad-44d1-a400-3375bfb5dfd6"),
-        };
-
         var client = _factory.CreateClient();
 
         var httpContent = new StringContent(
@@ -104,15 +91,14 @@ public class ItemControllerTests : IClassFixture<InMemoryApplicationFactory<Prog
 
         var response = await client.PostAsync("/api/v1/items", httpContent);
         var content = await response.Content.ReadAsStringAsync();
-        Console.WriteLine(content);
+
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     [Fact]
     public async Task UpdateShouldModifyExistingItem()
     {
-        // Given
-
+        // Given 
         var request = new EditItemRequest()
         {
             Id = Guid.Parse("b5b05534-9263-448c-a69e-0bbd8b3eb90e"),
@@ -134,8 +120,8 @@ public class ItemControllerTests : IClassFixture<InMemoryApplicationFactory<Prog
             JsonConvert.SerializeObject(request),
             Encoding.UTF8,
             "application/json");
-        // When
 
+        // When 
         var response = await client.PutAsync($"/api/v1/items/{request.Id}", httpContent);
         response.EnsureSuccessStatusCode();
 
