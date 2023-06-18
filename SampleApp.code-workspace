@@ -20,7 +20,12 @@
 	},
 	{
 		"path": "projects/Domain.Tests"
+	},
+	{
+		"path": "projects/API.Tests"
 	}
 ],
-  "settings": {}
+"settings": {
+	"editor.defaultFormatter": "ms-dotnettools.csharp"
+}
 }
