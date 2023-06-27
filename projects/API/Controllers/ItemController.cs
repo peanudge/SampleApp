@@ -1,4 +1,4 @@
-using API.Filter;
+using API.Filters;
 using Domain.Requests.Item;
 using Domain.Responses.Item;
 using Domain.Services;
@@ -8,6 +8,7 @@ namespace API.Controllers;
 
 [Route("api/v1/items")]
 [ApiController]
+[JsonException]
 public class ItemController : ControllerBase
 {
     private readonly IItemService _itemService;

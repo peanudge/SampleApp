@@ -3,7 +3,7 @@ using Domain.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace API.Filter
+namespace API.Filters
 {
     public class ItemExistsAttribute : TypeFilterAttribute
     {

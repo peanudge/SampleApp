@@ -1,4 +1,4 @@
-using API.Filter;
+using API.Filters;
 using Domain.Requests.Item;
 using Domain.Responses.Item;
 using Domain.Services;
