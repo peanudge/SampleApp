@@ -1,3 +1,4 @@
+using API.Filter;
 using Domain.Requests.Item;
 using Domain.Responses.Item;
 using Domain.Services;
@@ -25,6 +26,7 @@ public class ItemController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [ItemExists]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ItemResponse))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
     public async Task<IActionResult> GetById([FromRoute] Guid id)
@@ -56,6 +58,7 @@ public class ItemController : ControllerBase
 
 
     [HttpPut("{id:guid}")]
+    [ItemExists]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ItemResponse))]
     public async Task<IActionResult> Put(Guid id, [FromBody] EditItemRequest request)
     {
