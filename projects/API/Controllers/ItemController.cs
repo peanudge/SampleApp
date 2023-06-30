@@ -1,4 +1,5 @@
 using API.Filters;
+using API.ResponseModels;
 using Domain.Requests.Item;
 using Domain.Responses.Item;
 using Domain.Services;
@@ -19,11 +20,22 @@ public class ItemController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ItemResponse>))]
-    public async Task<IActionResult> Get()
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PaginatedItemsResponseModel<ItemResponse>))]
+    public async Task<IActionResult> Get([FromQuery] int pageSize = 10, int pageIndex = 0)
     {
         var result = await _itemService.GetItemsAsync();
-        return Ok(result);
+
+        var totalItems = result.Count();
+
+        var itemsOnPage = result
+            .OrderBy(c => c.Name)
+            .Skip(pageSize * pageIndex)
+            .Take(pageSize);
+
+        var model = new PaginatedItemsResponseModel<ItemResponse>(
+            pageIndex, pageSize, totalItems, itemsOnPage);
+
+        return Ok(model);
     }
 
     [HttpGet("{id:guid}")]

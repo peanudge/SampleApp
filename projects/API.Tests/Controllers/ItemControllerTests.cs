@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text;
+using API.ResponseModels;
 using Domain.Models;
 using Domain.Requests.Item;
 using Domain.Responses.Item;
@@ -132,5 +133,23 @@ public class ItemControllerTests : IClassFixture<InMemoryApplicationFactory<Prog
         Assert.Equal(request.Description, responseEntity.Description);
         Assert.Equal(request.GenreId, responseEntity.GenreId);
         Assert.Equal(request.ArtistId, responseEntity.ArtistId);
+    }
+
+
+    [Theory]
+    [InlineData("/api/items/?pageSize=1&pageIndex=0", 1, 0)]
+    [InlineData("/api/items/?pageSize=2&pageIndex=0", 2, 0)]
+    [InlineData("/api/items/?pageSize=1&pageIndex=1", 1, 1)]
+    public async Task GetShouldReturnPaginatedData(string url, int pageSize, int pageIndex)
+    {
+        var client = _factory.CreateClient();
+        var response = await client.GetAsync(url);
+        response.EnsureSuccessStatusCode();
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var responseEntity = JsonConvert.DeserializeObject<PaginatedItemsResponseModel<ItemResponse>>(responseContent);
+
+        Assert.Equal(pageIndex, responseEntity.PageIndex);
+        Assert.Equal(pageSize, responseEntity.PageSize);
+        Assert.Equal(pageSize, responseEntity.Data.Count());
     }
 }
