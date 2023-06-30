@@ -1,10 +1,15 @@
 using API.Extensions;
+using API.Filters;
 using Domain.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(config =>
+{
+    config.Filters.Add<HttpCustomExceptionFilter>();
+});
+
 builder.Services.AddDatabaseContext(builder.Configuration);
 builder.Services.AddMappers();
 builder.Services.AddServices();
