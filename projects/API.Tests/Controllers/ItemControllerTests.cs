@@ -137,9 +137,9 @@ public class ItemControllerTests : IClassFixture<InMemoryApplicationFactory<Prog
 
 
     [Theory]
-    [InlineData("/api/items/?pageSize=1&pageIndex=0", 1, 0)]
-    [InlineData("/api/items/?pageSize=2&pageIndex=0", 2, 0)]
-    [InlineData("/api/items/?pageSize=1&pageIndex=1", 1, 1)]
+    [InlineData("/api/v1/items/?pageSize=1&pageIndex=0", 1, 0)]
+    [InlineData("/api/v1/items/?pageSize=2&pageIndex=0", 2, 0)]
+    [InlineData("/api/v1/items/?pageSize=1&pageIndex=1", 1, 1)]
     public async Task GetShouldReturnPaginatedData(string url, int pageSize, int pageIndex)
     {
         var client = _factory.CreateClient();
