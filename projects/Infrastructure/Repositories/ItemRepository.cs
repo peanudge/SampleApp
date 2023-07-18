@@ -47,5 +47,29 @@ namespace Intrastructure.Repositories
             _context.Entry(item).State = EntityState.Modified;
             return item;
         }
+
+        public async Task<IEnumerable<Item>> GetItemByArtistIdAsync(Guid artistId)
+        {
+            var items = await _context.Items
+                .AsNoTracking()
+                .Where(item => item.ArtistId == artistId)
+                .Include(item => item.Artist)
+                .Include(item => item.Genre)
+                .ToListAsync();
+
+            return items;
+        }
+
+        public async Task<IEnumerable<Item>> GetItemByGenreIdAsync(Guid genreId)
+        {
+            var items = await _context.Items
+                .AsNoTracking()
+                .Where(item => item.GenreId == genreId)
+                .Include(item => item.Artist)
+                .Include(item => item.Genre)
+                .ToListAsync();
+
+            return items;
+        }
     }
 }
