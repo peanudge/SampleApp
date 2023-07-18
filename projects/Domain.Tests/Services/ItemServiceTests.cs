@@ -4,7 +4,7 @@ using Domain.Models;
 using Domain.Requests.Item;
 using Domain.Services;
 using Fixtures;
-using Intrastructure.Repositories;
+using Infrastructure.Repositories;
 
 namespace Domain.Tests.Services;
 

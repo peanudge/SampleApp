@@ -1,9 +1,8 @@
 using Domain.Models;
 using Domain.Repositories;
-using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-namespace Intrastructure.Repositories
+namespace Infrastructure.Repositories
 {
     public class ItemRepository : IItemRepository
     {

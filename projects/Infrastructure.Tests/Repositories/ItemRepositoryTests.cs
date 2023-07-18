@@ -1,6 +1,6 @@
 using Domain.Models;
 using Fixtures;
-using Intrastructure.Repositories;
+using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Tests

@@ -2,7 +2,7 @@ using Domain.Models;
 using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Respositories;
+namespace Infrastructure.Repositories;
 
 public class GenreRepository : IGenreRepository
 {

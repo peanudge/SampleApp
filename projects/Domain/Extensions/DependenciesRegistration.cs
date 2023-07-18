@@ -17,7 +17,9 @@ public static class DependenciesRegistration
     public static IServiceCollection AddServices(this IServiceCollection services)
     {
         return services
-            .AddScoped<IItemService, ItemService>();
+            .AddScoped<IItemService, ItemService>()
+            .AddScoped<IGenreService, GenreService>()
+            .AddScoped<IArtistService, ArtistService>();
     }
 
     public static IServiceCollection AddValidators(this IServiceCollection services)

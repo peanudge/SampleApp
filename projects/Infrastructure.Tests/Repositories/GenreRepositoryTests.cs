@@ -1,8 +1,8 @@
 using Domain.Models;
 using Fixtures;
-using Infrastructure.Respositories;
+using Infrastructure.Repositories;
 
-namespace Intrastructure.Tests.Repositories;
+namespace Infrastructure.Tests.Repositories;
 
 public class GenreRepositoryTests : IClassFixture<CatalogContextFactory>
 {

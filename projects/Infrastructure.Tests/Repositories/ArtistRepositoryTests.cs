@@ -1,9 +1,8 @@
 using Domain.Models;
 using Fixtures;
-using Infrastructure.Respositories;
-using Xunit;
+using Infrastructure.Repositories;
 
-namespace Intrastructure.Tests.Repositories;
+namespace Infrastructure.Tests.Repositories;
 
 public class AritstRepositoryTest : IClassFixture<CatalogContextFactory>
 {
