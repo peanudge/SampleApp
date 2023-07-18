@@ -3,6 +3,7 @@ using API.ResponseModels;
 using Domain.Requests.Artist;
 using Domain.Responses.Item;
 using Domain.Services;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -57,8 +58,17 @@ public class ArtistController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(AddArtistRequest request)
+    public async Task<IActionResult> Post(AddArtistRequest request, [FromServices] IValidator<AddArtistRequest> validator)
     {
+        var validationResult = await validator.ValidateAsync(request);
+
+        if (!validationResult.IsValid)
+        {
+            var errorMessages = validationResult.Errors.Select(error => error.ErrorMessage);
+
+            return Problem(title: "Fail to add artist.", detail: String.Join(", ", errorMessages), statusCode: 400);
+        }
+
         var result = await _artistService.AddArtistAsync(request);
         return CreatedAtAction(nameof(GetById), new { id = result.ArtistId }, null);
     }

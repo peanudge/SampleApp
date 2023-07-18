@@ -1,8 +1,8 @@
-
 using API.ResponseModels;
 using Domain.Requests.Genre;
 using Domain.Responses.Item;
 using Domain.Services;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -46,8 +46,19 @@ public class GenreController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(AddGenreRequest request)
+    public async Task<IActionResult> Post(
+        AddGenreRequest request,
+        [FromServices] IValidator<AddGenreRequest> validator)
     {
+        var validationResult = await validator.ValidateAsync(request);
+
+        if (!validationResult.IsValid)
+        {
+            var errorMessages = validationResult.Errors.Select(error => error.ErrorMessage);
+
+            return Problem(title: "Fail to add genre.", detail: String.Join(", ", errorMessages), statusCode: 400);
+        }
+
         var result = await _genreService.AddGenreAsync(request);
         return CreatedAtAction(nameof(GetById), new { id = result.GenreId }, null);
     }

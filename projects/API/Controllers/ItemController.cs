@@ -1,8 +1,10 @@
+using System.Net;
 using API.Filters;
 using API.ResponseModels;
 using Domain.Requests.Item;
 using Domain.Responses.Item;
 using Domain.Services;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -63,8 +65,19 @@ public class ItemController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ProblemDetails))]
-    public async Task<IActionResult> Post([FromBody] AddItemRequest request)
+    public async Task<IActionResult> Post([FromBody] AddItemRequest request, [FromServices] IValidator<AddItemRequest> validator)
     {
+        var validationResult = await validator.ValidateAsync(request);
+        if (!validationResult.IsValid)
+        {
+            var errorMessages = String.Join(", ", validationResult.Errors.Select(error => error.ErrorMessage));
+
+            return Problem(
+                title: "Failed to add item.",
+                detail: errorMessages,
+                statusCode: (int)HttpStatusCode.BadRequest);
+        }
+
         var result = await _itemService.AddItemAsync(request);
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, null);
     }
@@ -73,8 +86,20 @@ public class ItemController : ControllerBase
     [HttpPut("{id:guid}")]
     [ItemExists]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ItemResponse))]
-    public async Task<IActionResult> Put(Guid id, [FromBody] EditItemRequest request)
+    public async Task<IActionResult> Put(Guid id, [FromBody] EditItemRequest request, [FromServices] IValidator<EditItemRequest> validator)
     {
+        var validationResult = await validator.ValidateAsync(request);
+
+        if (!validationResult.IsValid)
+        {
+            var errorMessages = String.Join(", ", validationResult.Errors.Select(error => error.ErrorMessage));
+
+            return Problem(
+                title: "Failed to edit item.",
+                detail: errorMessages,
+                statusCode: (int)HttpStatusCode.BadRequest);
+        }
+
         request.Id = id;
         var result = await _itemService.EditItemAsync(request);
         return Ok(result);
