@@ -11,6 +11,8 @@ namespace Infrastructure
 
         // TODO: Replace Item to ItemEntity When apply Hexagon Architecture
         public DbSet<Item> Items { get; set; } = null!;
+        public DbSet<Genre> Genres { get; set; } = null!;
+        public DbSet<Artist> Artists { get; set; } = null!;
 
         public CatalogContext(DbContextOptions<CatalogContext> options) :
             base(options)
