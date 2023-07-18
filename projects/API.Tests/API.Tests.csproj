@@ -27,12 +27,5 @@
     <ProjectReference Include="..\Fixtures\Fixtures.csproj" />
     <ProjectReference Include="..\API\API.csproj" /> 
   </ItemGroup>
-
-
-  <!-- Mock Data -->
-  <ItemGroup>
-     <None Update="record-data.json">
-       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-     </None> 
-   </ItemGroup>
+ 
 </Project>
