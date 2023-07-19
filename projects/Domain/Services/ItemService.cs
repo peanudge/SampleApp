@@ -24,9 +24,20 @@ public class ItemService : IItemService
         return _itemMapper.Map(result);
     }
 
-    public Task<ItemResponse> DeleteItemAsync(DeleteItemRequest request)
+    public async Task<ItemResponse> DeleteItemAsync(DeleteItemRequest request)
     {
-        throw new NotImplementedException();
+        var result = await _itemRepository.GetAsync(request.Id);
+        if (result is null)
+        {
+            throw new ArgumentException($"Entity with {request.Id} is not present");
+        }
+
+        result.IsInactive = true;
+
+        _itemRepository.Update(result);
+        await _itemRepository.UnitOfWork.SaveChangesAsync();
+
+        return _itemMapper.Map(result);
     }
 
     public async Task<ItemResponse> EditItemAsync(EditItemRequest request)

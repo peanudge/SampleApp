@@ -152,4 +152,26 @@ public class ItemControllerTests : IClassFixture<InMemoryApplicationFactory<Prog
         Assert.Equal(pageSize, responseEntity.PageSize);
         Assert.Equal(pageSize, responseEntity.Data.Count());
     }
+
+    [Theory]
+    [LoadData("item")]
+    public async Task DeleteShouldReturnsNoContentWhenCalledWithRightId(Item request)
+    {
+        var client = _factory.CreateClient();
+
+        var response = await client.DeleteAsync($"/api/v1/items/{request.Id}");
+        response.EnsureSuccessStatusCode();
+
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task DeleteShouldReturnsNotFoundWhenCalledWithNotExistingId()
+    {
+        var client = _factory.CreateClient();
+
+        var response = await client.DeleteAsync($"/api/v1/items/{Guid.NewGuid()}");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
 }
