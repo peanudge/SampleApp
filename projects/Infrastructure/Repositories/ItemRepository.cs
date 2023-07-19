@@ -22,6 +22,7 @@ namespace Infrastructure.Repositories
                 .Items
                 .TagWith("ItemRepository.GetAsync")
                 .AsNoTracking()
+                .Where(x => !x.IsInactive)
                 .ToListAsync();
         }
 
@@ -51,6 +52,7 @@ namespace Infrastructure.Repositories
         {
             var items = await _context.Items
                 .AsNoTracking()
+                .Where(x => !x.IsInactive)
                 .Where(item => item.ArtistId == artistId)
                 .Include(item => item.Artist)
                 .Include(item => item.Genre)
@@ -63,6 +65,7 @@ namespace Infrastructure.Repositories
         {
             var items = await _context.Items
                 .AsNoTracking()
+                .Where(x => !x.IsInactive)
                 .Where(item => item.GenreId == genreId)
                 .Include(item => item.Artist)
                 .Include(item => item.Genre)

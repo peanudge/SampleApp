@@ -150,13 +150,32 @@ namespace Infrastructure.Tests
             Assert.Equal("Updated Description", item.Description);
         }
 
-        [Fact(Skip = "Not Implemented")]
-        public void ShouldSoftDeleteItem()
+        [Theory]
+        [InlineData("f5da5ce4-091e-492e-a70a-22b073d75a52")]
+        public async Task GetItemsShouldNotReturnInactiveRecords(string id)
         {
-            // Given 
-            // When 
-            // Then
-            throw new NotImplementedException();
+            var result = await _repository.GetAsync();
+            Assert.DoesNotContain(result, (x => x.Id == new Guid(id)));
+        }
+
+        [Theory]
+        [InlineData("f5da5ce4-091e-492e-a70a-22b073d75a52")]
+        public async Task GetItemsByArtistShouldNotReturnInactiveRecords(string id)
+        {
+            var artistId = "3eb00b42-a9f0-4012-841d-70ebf3ab7474";
+
+            var result = await _repository.GetItemByArtistIdAsync(new Guid(artistId));
+
+            Assert.DoesNotContain(result, (x => x.Id == new Guid(id)));
+        }
+
+        [Theory]
+        [InlineData("f5da5ce4-091e-492e-a70a-22b073d75a52")]
+        public async Task GetItemsByGenreShouldNotReturnInactiveRecords(string id)
+        {
+            var genreId = "c04f05c0-f6ad-44d1-a400-3375bfb5dfd6";
+            var result = await _repository.GetItemByGenreIdAsync(new Guid(genreId));
+            Assert.DoesNotContain(result, (x => x.Id == new Guid(id)));
         }
     }
 }

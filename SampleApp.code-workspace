@@ -1,31 +1,34 @@
 {
   "folders": [
-	{
-		"path": "."
-	},
-	{
-		"path": "./projects/API"
-	},
-	{
-		"path": "./projects/Domain"
-	},
-	{
-		"path": "./projects/Infrastructure"
-	},
-	{
-		"path": "./projects/Infrastructure.Tests"
-	},
-	{
-		"path": "projects/Fixtures"
-	},
-	{
-		"path": "projects/Domain.Tests"
-	},
-	{
-		"path": "projects/API.Tests"
-	}
-],
-"settings": {
-	"editor.defaultFormatter": "ms-dotnettools.csharp"
-}
+    {
+      "path": "."
+    },
+    {
+      "path": "./projects/API"
+    },
+    {
+      "path": "./projects/Domain"
+    },
+    {
+      "path": "./projects/Infrastructure"
+    },
+    {
+      "path": "./projects/Infrastructure.Tests"
+    },
+    {
+      "path": "projects/Fixtures"
+    },
+    {
+      "path": "projects/Domain.Tests"
+    },
+    {
+      "path": "projects/API.Tests"
+    }
+  ],
+  "settings": {
+    "editor.defaultFormatter": "ms-dotnettools.csharp",
+    "[json]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
+  }
 }

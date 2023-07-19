@@ -15,5 +15,6 @@ namespace Domain.Models
         public Guid ArtistId { get; set; }
         public Artist Artist { get; set; } = null!;
         public Price Price { get; set; } = null!;
+        public bool IsInactive { get; set; }
     }
 }
