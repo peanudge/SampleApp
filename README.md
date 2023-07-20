@@ -1,10 +1,21 @@
-# Dev Plan
+# Projects using the ideal pattern
 
 1. Item, Genre, Artist Simple API Server
 
-- (DB, persistance layer) use ~~SQLite or in-memory~~ SQL Server in Docker as fast prototype.
-- (BE, test) Add unit case about domain logic.
-- [ ] (BE, domain layer) use hexagon-architecture for simple dependency graph.
+- Unit Tests
+- Slicing Layer Tests
+  - Inmemory Database
+- Integrated Tests (API Level using `WebApplicationFactory`)
+  - Mock using `Moq`
+- DTO Mapper manually
+- Validation (using `FluentValidation`)
+- ASP.NET Custom Filter
+
+  - Resource Existing Filter (`ItemExistsAttribute.cs`)
+  - Global Exception Hanlder (Global Filter)
+  - (TODO) Performance Check Filter
+
+- HATEOS REST API https://en.wikipedia.org/wiki/HATEOAS
 
 2. Add logic in client app using RTK(Redux-ToolKit)
 
@@ -15,12 +26,6 @@
 - (test) add storybook
 
 4. Deploy using Azure App Service.
-
-# This project have three-layer
-
-- API, as Web Layer receives requests and routes them to a service in the Domain or business layer
-- Domain, as Domain Layer
-- Infrastructure, as Persistence Layer to query for or modify the current state of our domain entities.
 
 # DB Connection
 
