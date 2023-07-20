@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
-[Route("api/genre")]
+[Route("api/v1/genre")]
 [ApiController]
 public class GenreController : ControllerBase
 {

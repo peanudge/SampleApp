@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
-[Route("api/artist")]
+[Route("api/v1/artist")]
 [ApiController]
 public class ArtistController : ControllerBase
 {

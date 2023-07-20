@@ -19,7 +19,7 @@ public class ArtistControllerTests : IClassFixture<InMemoryApplicationFactory<Pr
     }
 
     [Theory]
-    [InlineData("/api/artist")]
+    [InlineData("/api/v1/artist")]
     public async Task SmokeTestOnItems(string url)
     {
         var client = _factory.CreateClient();
@@ -28,7 +28,7 @@ public class ArtistControllerTests : IClassFixture<InMemoryApplicationFactory<Pr
     }
 
     [Theory]
-    [InlineData("/api/artist/?pageSize=1&pageIndex=0", 1, 0)]
+    [InlineData("/api/v1/artist/?pageSize=1&pageIndex=0", 1, 0)]
     public async Task GetShouldReturnPaginatedData(string url, int pageSize, int pageIndex)
     {
         var client = _factory.CreateClient();
@@ -49,7 +49,7 @@ public class ArtistControllerTests : IClassFixture<InMemoryApplicationFactory<Pr
     public async Task GetByIdShouldReturnRightArtist(Artist request)
     {
         var client = _factory.CreateClient();
-        var response = await client.GetAsync($"/api/artist/{request.ArtistId}");
+        var response = await client.GetAsync($"/api/v1/artist/{request.ArtistId}");
 
         response.EnsureSuccessStatusCode();
 
@@ -73,13 +73,13 @@ public class ArtistControllerTests : IClassFixture<InMemoryApplicationFactory<Pr
             Encoding.UTF8,
             "application/json");
 
-        var response = await client.PostAsync("/api/artist", httpContent);
+        var response = await client.PostAsync("/api/v1/artist", httpContent);
 
         response.EnsureSuccessStatusCode();
 
         var responseLocationHeader = response.Headers.Location;
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-        Assert.Contains("/api/artist/", responseLocationHeader!.ToString());
+        Assert.Contains("/api/v1/artist/", responseLocationHeader!.ToString());
     }
 }

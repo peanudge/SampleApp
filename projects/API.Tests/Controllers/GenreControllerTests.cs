@@ -19,7 +19,7 @@ public class GenreControllerTests : IClassFixture<InMemoryApplicationFactory<Pro
     }
 
     [Theory]
-    [InlineData("/api/genre")]
+    [InlineData("/api/v1/genre")]
     public async Task SmokeTestOnItems(string url)
     {
         var client = _factory.CreateClient();
@@ -29,7 +29,7 @@ public class GenreControllerTests : IClassFixture<InMemoryApplicationFactory<Pro
 
 
     [Theory]
-    [InlineData("/api/genre/?pageSize=1&pageIndex=0", 1, 0)]
+    [InlineData("/api/v1/genre/?pageSize=1&pageIndex=0", 1, 0)]
     public async Task GetShouldReturnPaginatedData(string url, int pageSize, int pageIndex)
     {
         var client = _factory.CreateClient();
@@ -50,7 +50,7 @@ public class GenreControllerTests : IClassFixture<InMemoryApplicationFactory<Pro
     public async Task GetByIdShouldReturnRightArtist(Genre request)
     {
         var client = _factory.CreateClient();
-        var response = await client.GetAsync($"/api/genre/{request.GenreId}");
+        var response = await client.GetAsync($"/api/v1/genre/{request.GenreId}");
 
         response.EnsureSuccessStatusCode();
 
@@ -74,13 +74,13 @@ public class GenreControllerTests : IClassFixture<InMemoryApplicationFactory<Pro
             Encoding.UTF8,
             "application/json");
 
-        var response = await client.PostAsync("/api/genre", httpContent);
+        var response = await client.PostAsync("/api/v1/genre", httpContent);
 
         response.EnsureSuccessStatusCode();
 
         var responseLocationHeader = response.Headers.Location;
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-        Assert.Contains("/api/genre/", responseLocationHeader!.ToString());
+        Assert.Contains("/api/v1/genre/", responseLocationHeader!.ToString());
     }
 }
