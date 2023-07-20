@@ -15,6 +15,7 @@
   - Global Exception Hanlder (Global Filter)
   - (TODO) Performance Check Filter
 
+- (TODO) HAXAGON Architecture
 - HATEOS REST API https://en.wikipedia.org/wiki/HATEOAS
 
 2. Add logic in client app using RTK(Redux-ToolKit)

@@ -70,12 +70,8 @@ public class ItemController : ControllerBase
         var validationResult = await validator.ValidateAsync(request);
         if (!validationResult.IsValid)
         {
-            var errorMessages = String.Join(", ", validationResult.Errors.Select(error => error.ErrorMessage));
-
-            return Problem(
-                title: "Failed to add item.",
-                detail: errorMessages,
-                statusCode: (int)HttpStatusCode.BadRequest);
+            var response = ValidationErrorResponseFactory.Create(validationResult);
+            return BadRequest(response);
         }
 
         var result = await _itemService.AddItemAsync(request);
@@ -92,12 +88,8 @@ public class ItemController : ControllerBase
 
         if (!validationResult.IsValid)
         {
-            var errorMessages = String.Join(", ", validationResult.Errors.Select(error => error.ErrorMessage));
-
-            return Problem(
-                title: "Failed to edit item.",
-                detail: errorMessages,
-                statusCode: (int)HttpStatusCode.BadRequest);
+            var response = ValidationErrorResponseFactory.Create(validationResult);
+            return BadRequest(response);
         }
 
         request.Id = id;

@@ -1,6 +1,9 @@
+using API.Controllers;
 using API.Extensions;
 using API.Filters;
+using API.ResponseModels;
 using Domain.Extensions;
+using RiskFirst.Hateoas;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +18,20 @@ builder.Services.AddMappers();
 builder.Services.AddServices();
 builder.Services.AddRepositories();
 builder.Services.AddValidators();
+builder.Services.AddLinks(config =>
+{
+    config.AddPolicy<ItemHateoasResponse>(policy =>
+    {
+        policy.RequireRoutedLink(nameof(ItemHateoasController.Get), nameof(ItemController.Get))
+              .RequireRoutedLink(nameof(ItemHateoasController.GetById), nameof(ItemController.GetById), _ => new { id = _.Data?.Id })
+              .RequireRoutedLink(nameof(ItemHateoasController.Post), nameof(ItemController.Post))
+              .RequireRoutedLink(nameof(ItemHateoasController.Put), nameof(ItemController.Put), x => new { id = x.Data?.Id })
+              .RequireRoutedLink(nameof(ItemHateoasController.Delete), nameof(ItemController.Delete), x => new { id = x.Data?.Id });
+    });
+});
 builder.Services.AddSwaggerGen();
+
+
 
 var app = builder.Build();
 

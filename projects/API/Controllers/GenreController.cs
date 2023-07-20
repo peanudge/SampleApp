@@ -54,9 +54,8 @@ public class GenreController : ControllerBase
 
         if (!validationResult.IsValid)
         {
-            var errorMessages = validationResult.Errors.Select(error => error.ErrorMessage);
-
-            return Problem(title: "Fail to add genre.", detail: String.Join(", ", errorMessages), statusCode: 400);
+            var response = ValidationErrorResponseFactory.Create(validationResult);
+            return BadRequest(response);
         }
 
         var result = await _genreService.AddGenreAsync(request);
