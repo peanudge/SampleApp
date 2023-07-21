@@ -1,6 +1,7 @@
 using API.Controllers;
 using API.Extensions;
 using API.Filters;
+using API.MiddleWrae;
 using API.ResponseModels;
 using Domain.Extensions;
 using RiskFirst.Hateoas;
@@ -50,7 +51,7 @@ else
 
 app.UseStaticFiles();
 app.UseRouting();
-
+app.UseMiddleware<ResponseTimeMiddleware>();
 
 app.MapControllerRoute(
     name: "default",
