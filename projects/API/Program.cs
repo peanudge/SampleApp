@@ -4,6 +4,10 @@ using API.Filters;
 using API.MiddleWrae;
 using API.ResponseModels;
 using Domain.Extensions;
+using Infrastructure;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Polly;
 using RiskFirst.Hateoas;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,8 +37,35 @@ builder.Services.AddLinks(config =>
 builder.Services.AddSwaggerGen();
 
 
-
 var app = builder.Build();
+
+ExcuteMigarations(app, app.Environment);
+
+void ExcuteMigarations(IApplicationBuilder app, IWebHostEnvironment env)
+{
+    if (env.EnvironmentName == "Testing") return;
+
+    var retry = Policy.Handle<SqlException>()
+        .WaitAndRetry(new TimeSpan[]
+        {
+            TimeSpan.FromSeconds(3),
+            TimeSpan.FromSeconds(5),
+            TimeSpan.FromSeconds(8),
+        });
+
+    retry.Execute(() =>
+    {
+        app.ApplicationServices
+            .CreateScope()
+            .ServiceProvider
+            .GetService<CatalogContext>()?
+            .Database.Migrate();
+
+        Console.WriteLine("Migrations executed");
+    });
+}
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsProduction())
@@ -43,6 +74,8 @@ if (app.Environment.IsProduction())
     app.UseHsts();
     app.UseHttpsRedirection();
 }
+
+
 
 app.UseSwagger();
 app.UseSwaggerUI();
