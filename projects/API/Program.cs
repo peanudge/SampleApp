@@ -43,11 +43,9 @@ if (app.Environment.IsProduction())
     app.UseHsts();
     app.UseHttpsRedirection();
 }
-else
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseStaticFiles();
 app.UseRouting();
