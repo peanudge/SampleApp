@@ -23,6 +23,9 @@
     },
     {
       "path": "projects/API.Tests"
+    },
+    {
+      "path": "projects/Cart.API"
     }
   ],
   "settings": {
