@@ -26,6 +26,12 @@
     },
     {
       "path": "projects/Cart.API"
+    },
+    {
+      "path": "projects/API.Client"
+    },
+    {
+      "path": "projects/API.Contract"
     }
   ],
   "settings": {
