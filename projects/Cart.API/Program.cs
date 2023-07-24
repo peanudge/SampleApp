@@ -1,4 +1,8 @@
+using API.Client;
+using Cart.API;
 using Domain.Options;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +15,12 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<CartDataSourceSettings>(
     builder.Configuration.GetSection(CartDataSourceSettings.CartDataSource));
+
+builder.Services.AddCatalogService(new Uri(builder.Configuration["CatalogApiUrl"]));
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>());
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 
 var app = builder.Build();
 
