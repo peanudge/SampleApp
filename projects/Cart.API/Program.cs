@@ -1,8 +1,5 @@
-using API.Client;
-using Cart.API;
+using Cart.API.Extensions;
 using Domain.Options;
-using MediatR;
-using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
