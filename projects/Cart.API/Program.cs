@@ -1,5 +1,8 @@
+using System.Reflection;
 using Cart.API.Extensions;
-using Domain.Options;
+using Domain.Configuration;
+using Domain.Repositories;
+using Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,18 +18,19 @@ builder.Services.Configure<CartDataSourceSettings>(
 
 builder.Services.AddCatalogService(new Uri(builder.Configuration["CatalogApiUrl"]));
 
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>());
+builder.Services.AddScoped<ICartRepository, CartRepository>();
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+builder.Services.AddEventBus(builder.Configuration);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 

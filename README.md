@@ -28,7 +28,7 @@
 
 4. Deploy using Azure App Service.
 
-# DB Connection
+# How to make SQL DB Connection
 
 Run following docker image and Update `ConnectionStrings` in `<root path>/projects/API/appsettings.Development.json`
 
@@ -61,4 +61,10 @@ GO
     "SQLServer": "Server=localhost,1434;Database=store;User Id=sa;Password=P@ssw0rd;TrustServerCertificate=true;"
   }
 }
+```
+
+# Docker environment
+
+```bash
+
 ```

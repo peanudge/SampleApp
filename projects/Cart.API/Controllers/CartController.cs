@@ -21,6 +21,11 @@ public class CartController : ControllerBase
     public async Task<IActionResult> GetById(Guid id)
     {
         var result = await _mediator.Send(new GetCartCommand() { Id = id });
+        if (result is null)
+        {
+            return BadRequest("Cart not found");
+        }
+
         return Ok(result);
     }
 

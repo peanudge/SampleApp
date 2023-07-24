@@ -1,6 +1,6 @@
 using System.Text.Json;
 using Cart.API.Entities;
-using Domain.Options;
+using Domain.Configuration;
 using Domain.Repositories;
 using Microsoft.Extensions.Options;
 using StackExchange.Redis;

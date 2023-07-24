@@ -1,4 +1,4 @@
-namespace Domain.Options;
+namespace Domain.Configuration;
 
 public class CartDataSourceSettings
 {
@@ -6,5 +6,3 @@ public class CartDataSourceSettings
 
     public string? RedisConnectionString { get; set; }
 }
-
-

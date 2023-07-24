@@ -1,7 +1,13 @@
+using System.Text;
+using System.Text.Json;
+using Domain.Configurations;
+using Domain.Events;
 using Domain.Mappers;
 using Domain.Repositories;
 using Domain.Requests.Item;
 using Domain.Responses.Item;
+using Microsoft.Extensions.Logging;
+using RabbitMQ.Client;
 
 namespace Domain.Services;
 
@@ -9,11 +15,22 @@ public class ItemService : IItemService
 {
     private readonly IItemRepository _itemRepository;
     private readonly IItemMapper _itemMapper;
+    private readonly ConnectionFactory _eventBusConnectionFactory;
+    private readonly ILogger<ItemService> _logger;
+    private readonly EventBusSettings _settings;
 
-    public ItemService(IItemRepository itemRepository, IItemMapper itemMapper)
+    public ItemService(
+        IItemRepository itemRepository,
+        IItemMapper itemMapper,
+        ConnectionFactory eventBusConnectionFactory,
+        ILogger<ItemService> logger,
+        EventBusSettings eventBusSettings)
     {
         _itemRepository = itemRepository;
         _itemMapper = itemMapper;
+        _eventBusConnectionFactory = eventBusConnectionFactory;
+        _logger = logger;
+        _settings = eventBusSettings;
     }
 
     public async Task<ItemResponse> AddItemAsync(AddItemRequest request)
@@ -36,6 +53,8 @@ public class ItemService : IItemService
 
         _itemRepository.Update(result);
         await _itemRepository.UnitOfWork.SaveChangesAsync();
+
+        SendDeleteMessage(new ItemSoldOutEvent { Id = request.Id.ToString() });
 
         return _itemMapper.Map(result);
     }
@@ -73,5 +92,24 @@ public class ItemService : IItemService
     {
         var result = await _itemRepository.GetAsync();
         return result.Select(x => _itemMapper.Map(x)!);
+    }
+
+    private void SendDeleteMessage(ItemSoldOutEvent message)
+    {
+        try
+        {
+            // TODO: Need to study
+            var connection = _eventBusConnectionFactory.CreateConnection();
+            using var channel = connection.CreateModel();
+            channel.QueueDeclare(queue: _settings.EventQueue, true, false);
+            var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(message));
+            channel.ConfirmSelect();
+            channel.BasicPublish(exchange: "", routingKey: _settings.EventQueue, body: body);
+            channel.WaitForConfirmsOrDie();
+        }
+        catch (Exception e)
+        {
+            _logger.LogWarning("Unable to send message to event bus: {0}", e.Message);
+        }
     }
 }

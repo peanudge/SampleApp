@@ -5,6 +5,7 @@ using API.MiddleWrae;
 using API.ResponseModels;
 using Domain.Extensions;
 using Infrastructure;
+using Infrastructure.Exntensions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Polly;
@@ -19,6 +20,7 @@ builder.Services.AddControllersWithViews(config =>
 });
 
 builder.Services.AddDatabaseContext(builder.Configuration);
+builder.Services.AddEventBus(builder.Configuration);
 builder.Services.AddMappers();
 builder.Services.AddServices();
 builder.Services.AddRepositories();

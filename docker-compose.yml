@@ -10,21 +10,52 @@ services:
     networks:
       - my_network
     ports:
-      - 5000:5000 
+      - 5000:5000
     depends_on:
       - catalog_db
 
   catalog_db:
     image: mcr.microsoft.com/azure-sql-edge
     container_name: catalog_db
-    ports: 
+    ports:
       - 1433:1433
     env_file:
       - containers/db/db.env
     networks:
       - my_network
+
+  catalog_esb:
+    container_name: catalog_esb
+    image: rabbitmq:3-management-alpine
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - my_network
+
+  cart_api:
+    container_name: cart_api
+    build:
+      context: .
+      dockerfile: containers/cart_api/Dockerfile
+    env_file:
+      - containers/cart_api/cart_api.env
+    networks:
+      - my_network
+    ports:
+      - 5002:5002
+    depends_on:
+      - cart_db
+  
+  cart_db:
+    container_name: cart_db
+    networks:
+      - my_network
+    ports:
+      - 6379:6379
+    image: redis:alpine
+  
+
 networks:
   my_network:
     driver: bridge
-
-
