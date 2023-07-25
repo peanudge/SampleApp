@@ -1,6 +1,6 @@
 using System.Reflection;
+using Cart.API.BackgroundServices;
 using Cart.API.Extensions;
-using Domain.Configuration;
 using Domain.Repositories;
 using Infrastructure.Repositories;
 
@@ -25,6 +25,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.Get
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+builder.Services.AddHostedService<ItemSoldOutBackgroundService>();
 
 var app = builder.Build();
 

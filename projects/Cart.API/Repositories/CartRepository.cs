@@ -55,7 +55,9 @@ public class CartRepository : ICartRepository
             throw new ArgumentNullException(nameof(_settings.RedisConnectionString));
         }
 
-        var keys = _database.Multiplexer.GetServer(_settings.RedisConnectionString).Keys();
+        var configuration = ConfigurationOptions.Parse(_settings.RedisConnectionString);
+        var keys = _database.Multiplexer.GetServer(configuration.EndPoints.First()).Keys();
+
         return keys?.Select(key => key.ToString()) ?? new List<string>();
     }
 

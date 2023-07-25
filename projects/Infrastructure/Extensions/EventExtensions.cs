@@ -10,19 +10,8 @@ public static class EventExtensions
 {
     public static IServiceCollection AddEventBus(this IServiceCollection services, IConfiguration configuration)
     {
-        var config = new EventBusSettings();
-        // TODO: Change Option Pattern
-        configuration.Bind("EventBus", config);
-        services.AddSingleton(config);
-
-        ConnectionFactory factory = new ConnectionFactory
-        {
-            HostName = config.HostName,
-            UserName = config.User,
-            Password = config.Password
-        };
-
-        services.AddSingleton(factory);
+        services.Configure<EventBusSettings>(
+                    configuration.GetSection(EventBusSettings.EventBus));
         return services;
     }
 }

@@ -19,7 +19,7 @@ public class GenreController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] int pageSize = 0, [FromQuery] int pageIndex = 0)
+    public async Task<IActionResult> Get([FromQuery] int pageSize = 10, [FromQuery] int pageIndex = 0)
     {
         var result = await _genreService.GetGenresAsync();
         var totalItems = result.ToList().Count;
