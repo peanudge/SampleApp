@@ -7,6 +7,7 @@ using Domain.Repositories;
 using Domain.Requests.Item;
 using Domain.Responses.Item;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 
 namespace Domain.Services;
@@ -22,13 +23,20 @@ public class ItemService : IItemService
     public ItemService(
         IItemRepository itemRepository,
         IItemMapper itemMapper,
-        ConnectionFactory eventBusConnectionFactory,
-        ILogger<ItemService> logger,
-        EventBusSettings eventBusSettings)
+        IOptions<EventBusSettings> eventBusSettingsOption,
+        ILogger<ItemService> logger)
     {
+        var eventBusSettings = eventBusSettingsOption.Value;
         _itemRepository = itemRepository;
         _itemMapper = itemMapper;
-        _eventBusConnectionFactory = eventBusConnectionFactory;
+
+        _eventBusConnectionFactory = new ConnectionFactory
+        {
+            HostName = eventBusSettings.HostName,
+            UserName = eventBusSettings.User,
+            Password = eventBusSettings.Password
+        };
+
         _logger = logger;
         _settings = eventBusSettings;
     }

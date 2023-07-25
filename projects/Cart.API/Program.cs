@@ -13,8 +13,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.Configure<CartDataSourceSettings>(
-    builder.Configuration.GetSection(CartDataSourceSettings.CartDataSource));
+builder.Services.AddRedisSettings(builder.Configuration);
+
+builder.Services.AddEventBus(builder.Configuration);
 
 builder.Services.AddCatalogService(new Uri(builder.Configuration["CatalogApiUrl"]));
 
@@ -24,7 +25,6 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.Get
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-builder.Services.AddEventBus(builder.Configuration);
 
 var app = builder.Build();
 

@@ -2,6 +2,8 @@ namespace Cart.API.Configuration;
 
 public class EventBusSettings
 {
+    public const string EventBus = "EventBus";
+
     public string? HostName { get; set; }
     public string? User { get; set; }
     public string? Password { get; set; }
