@@ -1,10 +1,14 @@
 
+using Domain.Configurations;
 using Domain.Mappers;
 using Domain.Models;
 using Domain.Requests.Item;
 using Domain.Services;
 using Fixtures;
 using Infrastructure.Repositories;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Moq;
 
 namespace Domain.Tests.Services;
 
@@ -12,18 +16,33 @@ public class ItemServiceTests : IClassFixture<CatalogContextFactory>
 {
     private readonly ItemRepository _itemRepository;
     private readonly IItemMapper _itemMapper;
+    private readonly Mock<ILogger<ItemService>> _loggerMock;
+    private readonly IOptions<EventBusSettings> _eventBusSettingsOption;
 
     public ItemServiceTests(CatalogContextFactory catalogContextFactory)
     {
         _itemRepository = new ItemRepository(catalogContextFactory.ContextInstance);
         _itemMapper = catalogContextFactory.ItemMapper;
+
+        _loggerMock = new Mock<ILogger<ItemService>>();
+
+        // This test does not cover event bus, so we can pass empty settings
+        _eventBusSettingsOption = Options.Create(new EventBusSettings()
+        {
+            HostName = "",
+            User = "",
+            Password = "",
+            EventQueue = ""
+        });
+
     }
 
     [Fact]
     public async Task ShouldReturnRightAllItemData()
     {
+
         // Given
-        var itemService = new ItemService(_itemRepository, _itemMapper);
+        var itemService = new ItemService(_itemRepository, _itemMapper, _eventBusSettingsOption, _loggerMock.Object);
         // When
         var result = await itemService.GetItemsAsync();
         // Then
@@ -35,7 +54,7 @@ public class ItemServiceTests : IClassFixture<CatalogContextFactory>
     public async Task ShouldReturnRightItemDataById(Guid itemId)
     {
         // Given
-        var itemService = new ItemService(_itemRepository, _itemMapper);
+        var itemService = new ItemService(_itemRepository, _itemMapper, _eventBusSettingsOption, _loggerMock.Object);
         // When
 
         var result = await itemService.GetItemAsync(new GetItemRequest { Id = itemId });
@@ -48,7 +67,7 @@ public class ItemServiceTests : IClassFixture<CatalogContextFactory>
     public async Task ShouldThrowExceptionWhenGetItemByNullId()
     {
         // Given
-        var itemService = new ItemService(_itemRepository, _itemMapper);
+        var itemService = new ItemService(_itemRepository, _itemMapper, _eventBusSettingsOption, _loggerMock.Object);
 
         // When
         // Then
@@ -75,7 +94,7 @@ public class ItemServiceTests : IClassFixture<CatalogContextFactory>
             ReleaseDate = DateTimeOffset.Now,
             AvailableStock = 1
         };
-        IItemService service = new ItemService(_itemRepository, _itemMapper);
+        IItemService service = new ItemService(_itemRepository, _itemMapper, _eventBusSettingsOption, _loggerMock.Object);
 
         // When
         var result = await service.AddItemAsync(testItem);
@@ -108,7 +127,7 @@ public class ItemServiceTests : IClassFixture<CatalogContextFactory>
         };
 
         // When
-        IItemService service = new ItemService(_itemRepository, _itemMapper);
+        IItemService service = new ItemService(_itemRepository, _itemMapper, _eventBusSettingsOption, _loggerMock.Object);
         var result = await service.EditItemAsync(testItem);
 
         // Then
