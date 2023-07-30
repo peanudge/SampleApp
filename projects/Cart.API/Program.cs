@@ -33,10 +33,16 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseHttpsRedirection();
+if (app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+
+
+public partial class Program { }

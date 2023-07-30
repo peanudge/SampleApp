@@ -72,6 +72,7 @@ public class ItemSoldOutBackgroundService : BackgroundService
                     _logger.LogError(e.ToString());
                 }
             }
+
             _channel.BasicAck(ea.DeliveryTag, false);
         };
 
