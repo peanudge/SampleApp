@@ -13,6 +13,7 @@ namespace Infrastructure
         public DbSet<Item> Items { get; set; } = null!;
         public DbSet<Genre> Genres { get; set; } = null!;
         public DbSet<Artist> Artists { get; set; } = null!;
+        public DbSet<Category> Categories { get; set; } = null!;
 
         public CatalogContext(DbContextOptions<CatalogContext> options) :
             base(options)
@@ -23,6 +24,7 @@ namespace Infrastructure
             modelBuilder.ApplyConfiguration(new ItemEntitySchemaDefinition());
             modelBuilder.ApplyConfiguration(new ArtistEntitySchemaDefinition());
             modelBuilder.ApplyConfiguration(new GenreEntitySchemaDefinition());
+            modelBuilder.ApplyConfiguration(new CategoryEntitySchemaDefinition());
             base.OnModelCreating(modelBuilder);
         }
 
