@@ -7,5 +7,6 @@ public interface ICategoryRepository
 {
     public Task<List<Category>> GetRootCategories();
     public Task<Category?> GetCategoryById(long id);
-    public Task<List<CategoryDTO>> GetCategoriesWithSubCategoriesDTO();
+    public Task<List<Category>> GetCategoriesWithSubCategoriesDTO();
+    public Task<string?> GetCategoryPath(long categoryId);
 }

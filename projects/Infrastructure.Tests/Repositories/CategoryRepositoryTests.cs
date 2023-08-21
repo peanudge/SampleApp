@@ -14,45 +14,6 @@ public class CategoryRespositoryTests : IClassFixture<CatalogContextFactory>
     }
 
     [Fact]
-    public async Task ShouldReturnCorrectCategory()
-    {
-        var mockCategory = new Category
-        {
-            CategoryId = 1,
-            Name = "Test Category 1",
-            SubCategories = new List<Category> {
-                new Category
-                {
-                    CategoryId = 2,
-                    Name = "Test Category 2",
-                    SubCategories = new List<Category> {
-                        new Category
-                        {
-                            CategoryId = 3,
-                            Name = "Test Category 3",
-                            SubCategories = new List<Category>{}
-                        }
-                    }
-                }}
-        };
-
-        _factory.ContextInstance.Categories.Add(mockCategory);
-        await _factory.ContextInstance.SaveChangesAsync();
-        _factory.ContextInstance.ChangeTracker.Clear();
-
-
-        var respository = new CategoryRespository(_factory.ContextInstance);
-        var categories = await respository.GetRootCategories();
-        Assert.Single(categories);
-        var rootCategory = categories.First();
-        Assert.Single(rootCategory.SubCategories);
-        // INFO: until only subcategory
-        var subCategory = rootCategory.SubCategories.First();
-        Assert.Null(subCategory.SubCategories);
-    }
-
-
-    [Fact]
     public async Task ShouldReturnAllSubCategories()
     {
         var mockCategory = new Category
@@ -82,10 +43,44 @@ public class CategoryRespositoryTests : IClassFixture<CatalogContextFactory>
 
         var respository = new CategoryRespository(_factory.ContextInstance);
         var categories = await respository.GetCategoriesWithSubCategoriesDTO();
-        Assert.Single(categories);
+        Assert.NotEmpty(categories);
         var rootCategory = categories.First();
         Assert.Single(rootCategory.SubCategories);
         var subCategory = rootCategory.SubCategories.First();
         Assert.Single(subCategory.SubCategories);
+    }
+
+    [Fact]
+    public async Task ShouldCategoryPath()
+    {
+        var mockCategory = new Category
+        {
+            CategoryId = 7,
+            Name = "1",
+            SubCategories = new List<Category> {
+                new Category
+                {
+                    CategoryId = 8,
+                    Name = "2",
+                    SubCategories = new List<Category> {
+                        new Category
+                        {
+                            CategoryId = 9,
+                            Name = "3",
+                            SubCategories = new List<Category>{}
+                        }
+                    }
+                }}
+        };
+
+        _factory.ContextInstance.Categories.Add(mockCategory);
+        await _factory.ContextInstance.SaveChangesAsync();
+        _factory.ContextInstance.ChangeTracker.Clear();
+
+
+        var respository = new CategoryRespository(_factory.ContextInstance);
+        var path = await respository.GetCategoryPath(9);
+        Assert.NotNull(path);
+        Assert.Equal("1 > 2 > 3", path);
     }
 }

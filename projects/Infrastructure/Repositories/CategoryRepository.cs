@@ -1,6 +1,4 @@
 using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
-using Domain.DTO;
 using Domain.Models;
 using Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +17,7 @@ public class CategoryRespository : ICategoryRepository
     {
         _context = context;
     }
+
 
     public async Task<Category?> GetCategoryById(long id)
     {
@@ -42,15 +41,17 @@ public class CategoryRespository : ICategoryRepository
         return categories;
     }
 
-    private static Expression<Func<Category, CategoryDTO>> GetCategoryProjection(int maxDepth, int currentDepth = 0)
+    private static Expression<Func<Category, Category>> GetCategoryProjection(int maxDepth, int currentDepth = 0)
     {
         currentDepth++;
 
-        Expression<Func<Category, CategoryDTO>> result = category => new CategoryDTO()
+        Expression<Func<Category, Category>> result = category => new Category()
         {
             CategoryId = category.CategoryId,
             Name = category.Name,
-            SubCategories = currentDepth == maxDepth ? new List<CategoryDTO>() :
+            ParentCategoryId = category.ParentCategoryId,
+            ParentCategory = category.ParentCategory,
+            SubCategories = currentDepth == maxDepth ? new List<Category>() :
                 category.SubCategories.AsQueryable()
                 .Select(GetCategoryProjection(maxDepth, currentDepth))
                 .ToList()
@@ -59,7 +60,7 @@ public class CategoryRespository : ICategoryRepository
         return result;
     }
 
-    public async Task<List<CategoryDTO>> GetCategoriesWithSubCategoriesDTO()
+    public async Task<List<Category>> GetCategoriesWithSubCategoriesDTO()
     {
         var query = _context.Categories
             .TagWith("GetCategoriesWithSubCategoriesDTO")
@@ -68,5 +69,39 @@ public class CategoryRespository : ICategoryRepository
             .Select(GetCategoryProjection(MAX_CATEGORY_DEPTH, 0));
 
         return await query.ToListAsync();
+    }
+
+    public async Task<string?> GetCategoryPath(long categoryId)
+    {
+        var allCategories = await GetCategoriesWithSubCategoriesDTO();
+
+        foreach (var rootCategory in allCategories)
+        {
+            var result = FindCategoryPath(rootCategory, categoryId);
+            if (result != null)
+            {
+                return result;
+            }
+        }
+        return null;
+    }
+
+    private string? FindCategoryPath(Category category, long targetCategoryId)
+    {
+        if (category.CategoryId == targetCategoryId)
+        {
+            return category.Name;
+        }
+
+        foreach (var subCategory in category.SubCategories)
+        {
+            var path = FindCategoryPath(subCategory, targetCategoryId);
+            if (path != null)
+            {
+                return $"{category.Name} > {path}";
+            }
+        }
+
+        return null;
     }
 }
